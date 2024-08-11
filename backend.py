@@ -14,7 +14,7 @@ else:
     print("API Key not found.")
 
 
-def get_data(place, forecast_days, kind):
+def get_data(place, forecast_days):
     dates = []
     temperatures = []
     icons = []

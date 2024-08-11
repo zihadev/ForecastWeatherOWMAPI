@@ -27,41 +27,43 @@ days = st.slider("Forecast Days:", min_value=1, max_value=5,
                  help="Select the number of forecasted days")
 
 # List of options
-options = ["Temperature", "Sky"]
+options = ["Temperature Graph", "Sky and Temp Day by Day"]
 # Create a selectbox
 selected_option = st.selectbox("Select data to view:", options)
 day_label = "day" if days == 1 else "days"
 st.subheader(f"{selected_option} for the next {days} {day_label} for {place}")
 
-dates, temperatures, icons = get_data(place, days, selected_option)
+dates, temperatures, icons = get_data(place, days)
 
-figure = px.line(x=dates, y=temperatures,
-                 labels={"x": "Date", "y": "Temperature(C)"})
-st.plotly_chart(figure, on_select="rerun")
+match selected_option:
+    case "Temperature Graph":
+        figure = px.line(x=dates, y=temperatures,
+                         labels={"x": "Date", "y": "Temperature(C)"})
+        st.plotly_chart(figure, on_select="rerun")
+    case "Sky and Temp Day by Day":
+        # Create HTML for each icon
+        icon_html = [
+            f'<img src="https://openweathermap.org/img/w/{icon}.png" style="width:50px;height:50px;">'
+            for icon in icons
+        ]
 
-# Create HTML for each icon
-icon_html = [
-    f'<img src="https://openweathermap.org/img/w/{icon}.png" style="width:50px;height:50px;">'
-    for icon in icons
-]
+        temperature = [f"{temperature} °C" for temperature in temperatures]
+        # Convert lists to a pandas DataFrame
 
-temperature = [f"{temperature} °C" for temperature in temperatures]
-# Convert lists to a pandas DataFrame
+        # day = [f"{day}" for day in dates]
+        formatted_date = [day.strftime("%d %B %y, hour %H") for day in dates]
 
-# day = [f"{day}" for day in dates]
-formatted_date = [day.strftime("%d %B %y, hour %H") for day in dates]
+        # Determine the number of columns you want in the grid
+        num_columns = 3
+        columns = st.columns(num_columns)
 
-# Determine the number of columns you want in the grid
-num_columns = 3
-columns = st.columns(num_columns)
+        # Iterate over the data and place each in the grid
+        for index in range(len(formatted_date)):
+            # Use modulo to decide which column to place the item in
+            col = columns[index % num_columns]
 
-# Iterate over the data and place each in the grid
-for index in range(len(formatted_date)):
-    # Use modulo to decide which column to place the item in
-    col = columns[index % num_columns]
-
-    # Display content in the chosen column
-    with col:
-        st.markdown(icon_html[index], unsafe_allow_html=True)
-        st.write(f"{temperatures[index]} °C")
-        st.info(formatted_date[index])
+            # Display content in the chosen column
+            with col:
+                st.markdown(icon_html[index], unsafe_allow_html=True)
+                st.write(f"{temperatures[index]} °C")
+                st.info(formatted_date[index])
