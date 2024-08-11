@@ -51,10 +51,6 @@ temperature = [f"{temperature} °C" for temperature in temperatures]
 # day = [f"{day}" for day in dates]
 formatted_date = [day.strftime("%d %B %y, hour %H") for day in dates]
 
-# for i in range(0, len(formatted_date)):
-#     st.write(formatted_date[i], temperature[i], icon_html[i],
-#              unsafe_allow_html=True)
-
 # Determine the number of columns you want in the grid
 num_columns = 3
 columns = st.columns(num_columns)
