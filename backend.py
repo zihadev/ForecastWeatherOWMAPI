@@ -17,6 +17,7 @@ else:
 def get_data(place, forecast_days, kind):
     dates = []
     temperatures = []
+    icons = []
     data, lon, lat = find_city(place)
     weather_data = find_weather(lon, lat)
     today = datetime.now().date()
@@ -28,7 +29,8 @@ def get_data(place, forecast_days, kind):
         if today <= entry_date <= end_date:
             dates.append(date)
             temperatures.append(i['main']['temp'])
-    return dates, temperatures
+            icons.append(i['weather'][0]['icon'])
+    return dates, temperatures, icons
 
 
 def find_city(city_name):
